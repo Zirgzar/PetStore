@@ -1,7 +1,12 @@
 package pet.store.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -51,5 +56,25 @@ public class PetStoreController {
 			@RequestBody PetStoreCustomer customer) {
 		log.info("Adding customer: '{}' to store '{}'", customer, petStoreId);
 		return petStoreService.saveCustomer(petStoreId, customer);
+	}
+
+	@GetMapping
+	public List<PetStoreData> getAllPetStores() {
+		log.info("Retrieving all pet store information without customer and employee data.");
+		return petStoreService.retrieveAllPetStores();
+	}
+
+	@GetMapping("/{petStoreId}")
+	public PetStoreData getPetStoreById(@PathVariable Long petStoreId) {
+		log.info("Retrieving information for pet store with Id: '{}'", petStoreId);
+		return petStoreService.retrievePetStoreById(petStoreId);
+	}
+
+	@DeleteMapping("/{petStoreId}")
+	public Map<String, String> deletePetStoreById(@PathVariable Long petStoreId) {
+		log.info("Deleting pet store with Id: '{}'", petStoreId);
+		petStoreService.deletePetStoreById(petStoreId);
+
+		return Map.of("message", "Deletion of pet store with Id: '" + petStoreId + "' was successful.");
 	}
 }

@@ -1,5 +1,7 @@
 package pet.store.service;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -155,5 +157,32 @@ public class PetStoreService {
 			throw new IllegalArgumentException(
 					"Pet store with Id: '" + petStoreId + "' already has customer with Id: '" + customerId + "'.");
 		}
+	}
+
+	@Transactional(readOnly = true)
+	public List<PetStoreData> retrieveAllPetStores() {
+		List<PetStore> petStores = petStoreDao.findAll();
+		List<PetStoreData> result = new LinkedList<>();
+
+		for (PetStore petStore : petStores) {
+			PetStoreData petStoreData = new PetStoreData(petStore);
+
+			petStoreData.getCustomers().clear();
+			petStoreData.getEmployees().clear();
+
+			result.add(petStoreData);
+		}
+
+		return result;
+	}
+
+	@Transactional(readOnly = true)
+	public PetStoreData retrievePetStoreById(Long petStoreId) {
+		return new PetStoreData(findPetStoreById(petStoreId));
+	}
+
+	public void deletePetStoreById(Long petStoreId) {
+		PetStore petStore = findPetStoreById(petStoreId);
+		petStoreDao.delete(petStore);
 	}
 }
